@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+
+metadata:
+  name:
+spec:
+  selector:
+
+  template:
+    metadata:
+
+    spec:
+      containers:
+      - name: api
+        image: https://7D1AC580DB4C1B1539FE2DB8B07E3DDE.gr7.us-east-1.eks.amazonaws.com/api:v1 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name:  
+          valueFrom:
+            secretKeyRef:
+              name: mysqlsecret
+              key: MONGOCONNECTION 
+        resources:
+          requests:
+            cpu: 250m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi  
