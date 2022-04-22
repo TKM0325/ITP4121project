@@ -36,4 +36,7 @@ variable "vpc_subnet_count"{
 }
 
 #kubernetes
+variable "cluster_name"{
+  
+}
 
