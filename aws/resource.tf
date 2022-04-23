@@ -71,13 +71,10 @@ resource "aws_s3_bucket_object" "website" {
 
 #ec2
 resource "aws_instance" "nginx" {
-  count                  = var.instance_count
-  ami                    = nonsensitive(data.aws_ssm_parameter.ami.value)
+  ami =
   instance_type          = var.instance_type
   subnet_id              = module.vpc.public_subnets[(count.index % var.vpc_subnet_count)]
   vpc_security_group_ids = [aws_security_group.nginx-sg.id]
-  iam_instance_profile   = module.web_app_s3.instance_profile.name
-  depends_on             = [module.web_app_s3]
   security_groups = ""
   user_data = templatefile("${path.module}/startup_script.tpl", { s3_bucket_name = module.web_app_s3.web_bucket.id })
   tags = merge(local.common_tags, {
@@ -128,13 +125,13 @@ resource "aws_security_group_rule" "example" {
   ingress{
     from_port = 80
     to_port = 80
-    protocol = ""
+    protocol = "tcp"
     cidr_blocks = module.vpc.cidr_block
   }
   egress{
     from_port = 80
     to_port = 80
-    protocol = ""
+    protocol = "tcp"
     cidr_blocks = module.vpc.cidr_block
   }
 }
@@ -167,13 +164,6 @@ resource "aws_route_table" "private_route_table"{
   }
 }
 
-#eks
-/*resource "aws_eks_cluster" "example"{
-
-  name     = ""
-  role_arn = ""
-  vpc_config {}
-}*/
 
 #cloudwatch
 resource "aws_cloudwatch_metric_alarm" "alarm"{
@@ -190,6 +180,7 @@ resource "aws_eks_cluster" "kubernetes"{
     subnet_ids = aws_subnet
   }
 }
+# eks
 resource "aws_eks_node_group" "kubernetes_group"{
   cluster_name = aws_eks_cluster.kubernetes.names
   node_role_arn = ""

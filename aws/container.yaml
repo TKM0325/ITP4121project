@@ -1,0 +1,12 @@
+kind: Pod
+apiVersion: v1
+metadata:
+ name: database
+
+spec:
+  containers:
+    - name: database
+      image: mysql
+      env:
+      - name: MYSQL_ROOT_PASSWORD
+        value: example

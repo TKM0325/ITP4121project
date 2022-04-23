@@ -13,13 +13,22 @@ module "vpc"{
  azs = ["${var.aws_region}a","${var.aws_region}b"]
  private_subnets = var.private_subnets
  public_subnets = var.public_subnets
+
+  tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+  }
+
+  public_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                      = "1"
+  }
+
+  private_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = "1"
+  }
 }
 
-module "s3-bucket" {
-  source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.1.0"
-  # insert the 7 required variables here
-}
 
 #autoscaling
 module "autoscaling" {
