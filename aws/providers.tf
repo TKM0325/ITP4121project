@@ -11,6 +11,17 @@ provider "kubernetes"{
     version = "~>1.11"
     token = data.aws_eks_cluster_auth.cluster.token
     load_config_file = false
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-
+    client_certificate     = base64decode(var.client_certificate)
+    client_key             = base64decode(var.client_key)
+    cluster_ca_certificate = base64decode(var.cluster_ca_certificate)
+     exec {
+    api_version = "client.authentication.k8s.io/v1alpha1"
+    command     = "aws"
+    args = [
+      "eks",
+      "get-token",
+      "--cluster-name",
+      data.aws_eks_cluster.cluster.name
+    ]
+  }
 }
